@@ -9,17 +9,17 @@ import UIKit
 import Kingfisher
 
 protocol HomeCollectionViewCellDelegate: AnyObject {
-    func didTapAddToCartButton(car: Car)
-    func didTapFavoriteButton(car: Car)
+    func didTapAddToCartButton(car: Product)
+    func didTapFavoriteButton(car: Product)
 }
 
 class HomeCollectionViewCell: UICollectionViewCell {
     
-        var car: Car?
-        weak var delegate: HomeCollectionViewCellDelegate?
+    var car: Product?
+    weak var delegate: HomeCollectionViewCellDelegate?
     
     let favoriteImage: UIImageView = {
-       let image = UIImageView(image: UIImage(named: "Star"))
+        let image = UIImageView(image: UIImage(named: "Star"))
         image.contentMode = .scaleAspectFit
         image.isUserInteractionEnabled = true
         image.translatesAutoresizingMaskIntoConstraints = false
@@ -118,21 +118,21 @@ class HomeCollectionViewCell: UICollectionViewCell {
     
     
     @objc func favoriteButtonTapped() {
-          guard let car = car else { return }
-          delegate?.didTapFavoriteButton(car: car)
-      }
+        guard let car = car else { return }
+        delegate?.didTapFavoriteButton(car: car)
+    }
     
     @objc func addToCartButtonTapped() {
         guard let car = car else { return }
-          delegate?.didTapAddToCartButton(car: car)
-      }
+        delegate?.didTapAddToCartButton(car: car)
+    }
     
     func configure(with imageUrl: String, price: String, brand: String) {
         imageView.kf.setImage(with: URL(string: imageUrl))
         priceLabel.text = "\(price) ₺"
         brandLabel.text = brand
     }
-    func configuree(car: Car, isFavorite: Bool) {
+    func configuree(car: Product, isFavorite: Bool) {
         self.car = car
         favoriteImage.image = UIImage(named: isFavorite ? "Starr" : "Star")
     }

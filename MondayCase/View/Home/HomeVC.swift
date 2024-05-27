@@ -35,7 +35,6 @@ class HomeVC: UIViewController, UITextFieldDelegate {
     }
 }
 
-
 extension HomeVC {
     
     func setupLabel() {
@@ -74,12 +73,12 @@ extension HomeVC {
     }
     
     @objc func selectFilterTapped() {
-          let filterVC = FilterVC()
-          filterVC.delegate = self
-          let navController = UINavigationController(rootViewController: filterVC)
-          navController.modalPresentationStyle = .formSheet
-          present(navController, animated: true, completion: nil)
-      }
+        let filterVC = FilterVC()
+        filterVC.delegate = self
+        let navController = UINavigationController(rootViewController: filterVC)
+        navController.modalPresentationStyle = .formSheet
+        present(navController, animated: true, completion: nil)
+    }
     
     func setupNavigationBar() {
         
@@ -155,7 +154,7 @@ extension HomeVC {
 }
 
 extension HomeVC: HomeCollectionViewCellDelegate {
-    func didTapFavoriteButton(car: Car) {
+    func didTapFavoriteButton(car: Product) {
         if FavoriteViewModel.shared.isFavorite(car: car) {
             FavoriteViewModel.shared.removeFavorite(car: car)
         } else {
@@ -165,8 +164,8 @@ extension HomeVC: HomeCollectionViewCellDelegate {
         collectionView.reloadData()
     }
     
-    func didTapAddToCartButton(car: Car) {
-        CartViewModel.shared.addItem(car)
+    func didTapAddToCartButton(car: Product) {
+        BasketViewModel.shared.addItem(car)
     }
 }
 
@@ -205,61 +204,6 @@ extension HomeVC: UICollectionViewDelegate {
         detailVC.car = car
         detailVC.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(detailVC, animated: true)
-    }
-}
-
-
-
-protocol FilterVCDelegate: AnyObject {
-    func didApplyFilter(brand: String?)
-}
-
-class FilterVC: UIViewController {
-    
-    weak var delegate: FilterVCDelegate?
-    
-    var brandTextField: UITextField!
-    var applyButton: UIButton!
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        view.backgroundColor = .white
-        title = "Select Filter"
-        
-        brandTextField = UITextField()
-        brandTextField.placeholder = "Brand"
-        brandTextField.borderStyle = .roundedRect
-        brandTextField.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(brandTextField)
-        
-        applyButton = UIButton(type: .system)
-        applyButton.setTitle("Apply", for: .normal)
-        applyButton.addTarget(self, action: #selector(applyFilter), for: .touchUpInside)
-        applyButton.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(applyButton)
-        
-        setupConstraints()
-    }
-    
-    func setupConstraints() {
-        NSLayoutConstraint.activate([
-            brandTextField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
-            brandTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            brandTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            
-            applyButton.topAnchor.constraint(equalTo: brandTextField.bottomAnchor, constant: 20),
-            applyButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            applyButton.widthAnchor.constraint(equalToConstant: 100),
-            applyButton.heightAnchor.constraint(equalToConstant: 40)
-        ])
-    }
-    
-    @objc func applyFilter() {
-        let brand = brandTextField.text
-        
-        delegate?.didApplyFilter(brand: brand)
-        dismiss(animated: true, completion: nil)
     }
 }
 

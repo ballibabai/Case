@@ -9,7 +9,7 @@ import UIKit
 import Kingfisher
 
 class DetailVC: UIViewController {
-
+    
     var car: Product?
     
     private let imageView = UIImageView()
@@ -107,7 +107,7 @@ class DetailVC: UIViewController {
             addToCartButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
             addToCartButton.widthAnchor.constraint(equalToConstant: 120),
             addToCartButton.heightAnchor.constraint(equalToConstant: 44)
-
+            
         ])
     }
     
@@ -121,7 +121,7 @@ class DetailVC: UIViewController {
     
     @objc func addToCartButtonTapped() {
         guard let car = car else { return }
-        CartViewModel.shared.addItem(car)
+        BasketViewModel.shared.addItem(car)
         print("Item added to cart: \(car)")
     }
 }

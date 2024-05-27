@@ -41,13 +41,13 @@ struct Product: Codable {
     }
     
     init(basketItem: BasketItem) {
-        self.createdAt = basketItem.createdAt ?? ""
+        self.createdAt = ""
         self.name = basketItem.name ?? ""
-        self.image = basketItem.image ?? ""
+        self.image = ""
         self.price = String(basketItem.price) ?? ""
-        self.description = basketItem.description ?? ""
+        self.description = ""
         self.id = basketItem.id ?? ""
-        self.model = basketItem.model ?? ""
+        self.model = ""
         self.brand = basketItem.brand ?? ""
     }
     

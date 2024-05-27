@@ -14,11 +14,11 @@ class BasketViewModel {
     private init() {
         fetchCartItems()
     }
-       
-       private var items: [(car: Product, quantity: Int)] = []
     
-       private let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-       
+    private var items: [(car: Product, quantity: Int)] = []
+    
+    private let context = (UIApplication.shared.delegate as! AppDelegate).basketCoreDataStack.persistentContainer.viewContext
+    
     func addItem(_ car: Product) {
         if let index = items.firstIndex(where: { $0.car.id == car.id }) {
             items[index].quantity += 1
@@ -35,11 +35,11 @@ class BasketViewModel {
         }
         notifyCartUpdate()
     }
-       
-       func getItems() -> [(car: Product, quantity: Int)] {
-           return items
-       }
-       
+    
+    func getItems() -> [(car: Product, quantity: Int)] {
+        return items
+    }
+    
     func updateItem(_ car: Product, quantity: Int) {
         if let index = items.firstIndex(where: { $0.car.id == car.id }) {
             items[index].quantity = quantity
@@ -47,7 +47,7 @@ class BasketViewModel {
             notifyCartUpdate()
         }
     }
-       
+    
     func removeItem(_ car: Product) {
         items.removeAll { $0.car.id == car.id }
         let fetchRequest: NSFetchRequest<BasketItem> = BasketItem.fetchRequest()
@@ -63,50 +63,47 @@ class BasketViewModel {
         }
         notifyCartUpdate()
     }
-       
-       func total() -> Double {
-           return items.reduce(0) { $0 + ((Double($1.car.price) ?? 0.0) * Double($1.quantity)) }
-       }
+    
+    func total() -> Double {
+        return items.reduce(0) { $0 + ((Double($1.car.price) ?? 0.0) * Double($1.quantity)) }
+    }
     
     private func fetchCartItems() {
-          let fetchRequest: NSFetchRequest<BasketItem> = BasketItem.fetchRequest()
-          do {
-              let fetchedItems = try context.fetch(fetchRequest)
-              items = fetchedItems.map { (car: Product(basketItem: $0), quantity: Int($0.quantity)) }
-              print("Fetched items from Core Data: \(items)") // Debugging line
-          } catch {
-              print("Error fetching items: \(error)")
-          }
-      }
-      
-      private func saveContext() {
-          do {
-              try context.save()
-              print("Context saved successfully.") // Debugging line
-          } catch {
-              print("Error saving context: \(error)")
-          }
-      }
-      
-      private func updateCartItem(car: Product, quantity: Int) {
-          let fetchRequest: NSFetchRequest<BasketItem> = BasketItem.fetchRequest()
-          fetchRequest.predicate = NSPredicate(format: "id == %@", car.id)
-          do {
-              let fetchedItems = try context.fetch(fetchRequest)
-              if let fetchedItem = fetchedItems.first {
-                  fetchedItem.quantity = Int64(quantity)
-                  saveContext()
-              }
-          } catch {
-              print("Error fetching item: \(error)")
-          }
-      }
+        let fetchRequest: NSFetchRequest<BasketItem> = BasketItem.fetchRequest()
+        do {
+            let fetchedItems = try context.fetch(fetchRequest)
+            items = fetchedItems.map { (car: Product(basketItem: $0), quantity: Int($0.quantity)) }
+        } catch {
+            print("Error fetching items: \(error)")
+        }
+    }
+    
+    private func saveContext() {
+        do {
+            try context.save()
+        } catch {
+            print("Error saving context: \(error)")
+        }
+    }
+    
+    private func updateCartItem(car: Product, quantity: Int) {
+        let fetchRequest: NSFetchRequest<BasketItem> = BasketItem.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "id == %@", car.id)
+        do {
+            let fetchedItems = try context.fetch(fetchRequest)
+            if let fetchedItem = fetchedItems.first {
+                fetchedItem.quantity = Int64(quantity)
+                saveContext()
+            }
+        } catch {
+            print("Error fetching item: \(error)")
+        }
+    }
     
     private func notifyCartUpdate() {
         NotificationCenter.default.post(name: .cartUpdated, object: nil)
     }
 }
-
 
 extension Notification.Name {
     static let cartUpdated = Notification.Name("cartUpdated")
